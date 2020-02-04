@@ -5,8 +5,8 @@ output:
     df_print: paged
 ---
 ## Introduction
-  This dataset is the gene expression profiling of MDA231, BT549 and SUM159PT celles after selumetinib treatment or DUSP4 siRNA knockdown. MDA231, BT549 and SUM159PT basal-like breast cancer cell lines were transfected with non-targeting siRNA (siCONTROL), siRNA targeting DUSP4 (siDUSP4), or siCONTROL + 4 or 24 hr of 1uM selumetinib. The data were log2 RMA normalized.
-  This dataset has 36 samples which can be separated into 6 different groups, each group has three control sampels and 3 cases. 
+  This dataset is the gene expression profiling of MDA231, BT549 and SUM159PT celles after selumetinib treatment or DUSP4 siRNA knockdown. MDA231, BT549 and SUM159PT basal-like breast cancer cell lines were transfected with non-targeting siRNA (siCONTROL), siRNA targeting DUSP4 (siDUSP4), or siCONTROL + 4 or 24 hr of 1uM selumetinib. The data were log2 RMA normalized.  
+  This dataset has 36 samples which can be separated into 6 different groups, each group has three control sampels and 3 cases.   
   
 ## Questions & Answers  
 
@@ -29,14 +29,15 @@ A: I don't remove any outliers, the most I have done is to filter the values tha
 A: I remove the replicates, only save the unique symbols and corresponding values in my final result.
 
 ####Q7. What is the final coverage of your dataset?
-A: My final coverage is 18832 out of 33287 observed hgnc symbols from hugene11sttranscriptcluster.db .
-## Reference
-1. https://github.com/bcb420-2020/General_Course_Info/wiki/Assignment%231#Select_an_Expression_Data_Set
-2. https://www.ncbi.nlm.nih.gov/geo/info/geo2r.html#how_to_use
-3. https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41816
-4. https://risserlin.github.io/BCB420-lectures-public/lecture4_data_exploration_and_normalization.html#1
-5. https://www.ncbi.nlm.nih.gov/pubmed/23966295
-6. http://bioconductor.org/packages/release/data/annotation/html/hugene11sttranscriptcluster.db.html
+A: My final coverage is 18832 out of 33287 observed hgnc symbols from hugene11sttranscriptcluster.db .  
+  
+## Reference   
+1. https://github.com/bcb420-2020/General_Course_Info/wiki/Assignment%231#Select_an_Expression_Data_Set    
+2. https://www.ncbi.nlm.nih.gov/geo/info/geo2r.html#how_to_use   
+3. https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41816  
+4. https://risserlin.github.io/BCB420-lectures-public/lecture4_data_exploration_and_normalization.html#1  
+5. https://www.ncbi.nlm.nih.gov/pubmed/23966295  
+6. http://bioconductor.org/packages/release/data/annotation/html/hugene11sttranscriptcluster.db.html  
 
 
 ## Code & Output
