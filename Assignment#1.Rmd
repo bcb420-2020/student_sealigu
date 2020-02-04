@@ -1,18 +1,214 @@
 ---
-title: "Assignment #1"
-output: html_notebook
+title: 'Assignment #1'
+output:
+  html_document:
+    df_print: paged
 ---
+## Introduction
+  This dataset is the gene expression profiling of MDA231, BT549 and SUM159PT celles after selumetinib treatment or DUSP4 siRNA knockdown. MDA231, BT549 and SUM159PT basal-like breast cancer cell lines were transfected with non-targeting siRNA (siCONTROL), siRNA targeting DUSP4 (siDUSP4), or siCONTROL + 4 or 24 hr of 1uM selumetinib. The data were log2 RMA normalized.
+  This dataset has 36 samples which can be separated into 6 different groups, each group has three control sampels and 3 cases. 
+  
+## Questions & Answers  
 
+####Q1. What are the control and test conditions of the dataset?  
+A: This test is gene expression profiling of MDA231, BT549 and SUM159PT cells after selumetinib treatment or DUSP4 siRNA knockdown. The control elements are MDA231, BT549 and SUM159PT basasl-like breast cancer cell lines. The case elements are the transfected of those control elements with siRNA targeting DUSP4 or 4 or 24 hr of 1uM selumetinib.
+
+####Q2. Why is the dataset of interest to you?
+A: The rearch is talking about basal-like breast cancer which is a disease that lacks clinically approved targeted therapy. 
+
+####Q3. Were there expression values that were not unique for specific genes? How did you handle these?
+A: Some of the expression values that are duplicated in the data frame. I choose the average expression values for the unique genes.
+
+####Q4. Were ther expression values that could not be mapped to current HUGO symbols?
+A: I have many probe ids that cannot find the corresponding HUGO symbols from the gene database.  
+
+####Q5. How many outliers were removed?
+A: I don't remove any outliers, the most I have done is to filter the values that duplicated and cannot map to the HUGO symbols.
+
+####Q6. How did you handle replicates?
+A: I remove the replicates, only save the unique symbols and corresponding values in my final result.
+
+####Q7. What is the final coverage of your dataset?
+A: My final coverage is 18832 out of 33287 observed hgnc symbols from hugene11sttranscriptcluster.db .
+## Reference
+1. https://github.com/bcb420-2020/General_Course_Info/wiki/Assignment%231#Select_an_Expression_Data_Set
+2. https://www.ncbi.nlm.nih.gov/geo/info/geo2r.html#how_to_use
+3. https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41816
+4. https://risserlin.github.io/BCB420-lectures-public/lecture4_data_exploration_and_normalization.html#1
+5. https://www.ncbi.nlm.nih.gov/pubmed/23966295
+6. http://bioconductor.org/packages/release/data/annotation/html/hugene11sttranscriptcluster.db.html
+
+
+## Code & Output
 ```{r}
-#if(!requireNamespace("BiocManager", quitely = TRUE))
-#  install.package("BiocManager")
-#BiocManager::install("GEOquery")
-library("GEOquery")
-gse = getGEO("GSE117951", GSEMatrix = TRUE)
+library(GEOquery)
+library(Biobase)
+library(limma)
+library(edgeR)
+
+#load data
+# load origin data without mapping and clean duplicates
+gset <- getGEO("GSE41816", GSEMatrix =TRUE, getGPL=FALSE)
+if (length(gset) > 1) idx <- grep("GPL11532", attr(gset, "names")) else idx <- 1
+gset <- gset[[idx]]
+save(gset, file = 'GSE41816_matrix.Rdata')
+
+gse <- getGEO('GSE41816', destdir = ".",
+               AnnotGPL = FALSE,
+               getGPL = FALSE)
+
+exp <- read.table(file = 'GSE41816_series_matrix.txt.gz',
+                      sep = '\t',
+                      header = TRUE,
+                      quote = '',
+                      fill = TRUE,
+                      comment.char = "!")
+exp0 <- exp
+# save
+save(exp0, file = 'exp_GSE41816.Rdata')
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r}
+#GSE41816
+# load the data
+load("exp_GSE41816.Rdata")
+# change the row names into probe_id
+rownames(exp0) <- exp0[, 1]
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+# loading the database contain the HUGO symbols
+library(hugene11sttranscriptcluster.db)
+# load probe_ids and symbols
+ids <- toTable(hugene11sttranscriptclusterSYMBOL)
+# number of unique symbols
+length(unique(ids$symbol))
+
+# load probe_ids and ensembl ids
+ensembl <- toTable(hugene11sttranscriptclusterENSEMBL)
+# number of unique ensembl ids
+length(unique(ensembl$ensembl_id))
+
+table(rownames(exp0) %in% ids$probe_id)
+# save exists probe_ids in table according to HUGO database
+# only mapped genes can be saved
+exp0 <- exp0[rownames(exp0) %in% ids$probe_id,]
+
+# reduce the duplicated symbols, choose the max value in the row
+tmp <- by(exp0,
+         ids$symbol,
+         function(x) rownames(x)[which.max(rowMeans(x))])
+
+probes <- as.character(tmp)
+# filter again, leave unique symbols in the table
+exp0 <- exp0[rownames(exp0) %in% probes,]
+
+ids <- ids[match(rownames(exp0), ids$probe_id),]
+ensembl <- ensembl[match(rownames(exp0), ensembl$probe_id),]
+# change the row names into symbols
+rownames(exp0) <- ids$symbol
+# add new column to save ensembl ids
+exp0$X.Ensembl_ID <- ensembl$ensembl_id
+exp1 <- exp0
+# save into my local folder
+# exp1 contains the final result after mapping and clean
+save(exp1, file = 'exp_GSE41816_id_trans.Rdata')
+```
+
+```{r}
+# load data after mapping and clean
+load("exp_GSE41816_id_trans.Rdata")
+# load data as matrix
+load("GSE41816_matrix.Rdata")
+
+# Plots
+# boxplot for original data from GEO database
+par(mar=c(2+round(max(nchar(sampleNames(gset)))/2),4,2,1))
+title <- paste ("GSE41816", '/', annotation(gset), " selected samples", sep ='')
+boxplot(exprs(gset), boxwex=0.7, notch=T, main=title, outline=FALSE, las=2)
+
+# boxplot after normalized
+# log ratio for the genes after mapping and clean
+d2p <- log2(cpm(exp1[, 2:37]))
+boxplot(d2p, xlab = "Samples", tlab = "log2",
+        las = 2, cex = 0.5, cex.lab = 0.5,
+        cex.aixs = 0.5, main = "siRNA Samples")
+abline(h = median(apply(d2p, 2, median)), 
+       col = "green", lwd = 0.6, lty = "dashed")
+
+# using normalize.quantiles to have a plot
+library(preprocessCore)
+GSE41816 <- normalize.quantiles(exprs(gset))
+plot(density(GSE41816), col = "blue", main = "")
+
+GSE41816log <- log2(exprs(gset))
+plot(GSE41816log)
+
+
+# Density plot with log2()
+count_density <- apply(log2(exp1[, 2:37]), 2, density)
+
+xlim <- 0; ylim <- 0
+for(i in 1:length(count_density)) {
+  xlim <- range(c(xlim, count_density[[i]]$x));
+  ylim <- range(c(ylim, count_density[[i]]$y));
+}
+
+cols <- rainbow(length(count_density))
+ltys <- rep(1, length(count_density))
+
+plot(count_density[[1]], xlim = xlim, ylim = ylim,
+     type = "n", ylab = "Smoothing density of log2 - siRNA",
+     main = "", cex.lab = 0.85)
+
+for (i in 1:length(count_density)) {
+  lines(count_density[[i]], col = cols[i], lty = ltys[i])
+}
+
+# Separate into groups
+group_list <- c(rep('MDA231_siCONTROL', 3), rep('MDA231_siDUSP4', 3),
+                rep('MDA231_AZD6244 4h', 3), rep('MDA231_AZD6244 24h', 3),
+                rep('SUM159PT_siCONTROL', 3), rep('SUM159PT_siDUSP4', 3),
+                rep('SUM159PT_AZD6244 4h', 3), rep('SUM159PT_AZD6244 24h', 3),
+                rep('BT549_siCONTROL', 3), rep('BT549_siDUSP4', 3),
+                rep('BT549_AZD6244 4h', 3), rep('BT549_AZD6244 24h', 3))
+# remove gene symbol and ensembl id
+exp2 <- exp1[2:37]
+colnames(exp2) <- rep(group_list, ncol(exp2)/36)
+# exp2 defined groups
+
+# boxplot by defined groups
+boxplot(exp2, xlab = "Samples", tlab = "Values",
+        las = 2, cex = 0.5, cex.lab = 0.5,
+        cex.aixs = 0.5, main = "GSE41816 Selected Samples",
+        col = c(rep("skyblue1", 3), rep("slateblue1", 3)))
+
+
+filter_matrix <- as.matrix(exp1[, 2:37])
+rownames(filter_matrix) <- exp1[,38]
+d = DGEList(counts = filter_matrix, group = colnames(exp2))
+# get normalized data by cpm()
+nor_counts <- cpm(d)
+
+# density plot after normalized by defined groups
+cd1 <- apply(log2(nor_counts), 2, density)
+
+xlim1 <- 0; ylim1 <- 0
+for(i in 1:length(cd1)) {
+  xlim1 <- range(c(xlim1, cd1[[i]]$x));
+  ylim1 <- range(c(ylim1, cd1[[i]]$y));
+}
+
+cols1 <- rainbow(length(cd1))
+ltys1 <- rep(1, length(cd1))
+
+plot(cd1[[1]], xlim = xlim1, ylim = ylim1,
+     type = "n", ylab = "Normalized density of log2 - siRNA",
+     main = "", cex.lab = 0.85)
+
+for (i in 1:length(cd1)) {
+  lines(cd1[[i]], col = cols1[i], lty = ltys1[i])
+}
+
+```
+
+

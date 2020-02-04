@@ -183,6 +183,10 @@ summary {
 </div>
 
 
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This dataset is the gene expression profiling of MDA231, BT549 and SUM159PT celles after selumetinib treatment or DUSP4 siRNA knockdown. MDA231, BT549 and SUM159PT basal-like breast cancer cell lines were transfected with non-targeting siRNA (siCONTROL), siRNA targeting DUSP4 (siDUSP4), or siCONTROL + 4 or 24 hr of 1uM selumetinib. The data were log2 RMA normalized. This dataset has 36 samples which can be separated into 6 different groups, each group has three control sampels and 3 cases.</p>
+</div>
 <div id="questions-answers" class="section level2">
 <h2>Questions &amp; Answers</h2>
 <div id="q1.-what-are-the-control-and-test-conditions-of-the-dataset" class="section level4">
@@ -211,7 +215,7 @@ summary {
 </div>
 <div id="q7.-what-is-the-final-coverage-of-your-dataset" class="section level4">
 <h4>Q7. What is the final coverage of your dataset?</h4>
-<p>A: My final coverage is 18832 out of 33287 observed values.</p>
+<p>A: My final coverage is 18832 out of 33287 observed hgnc symbols from hugene11sttranscriptcluster.db . ## Reference 1. <a href="https://github.com/bcb420-2020/General_Course_Info/wiki/Assignment%231#Select_an_Expression_Data_Set">https://github.com/bcb420-2020/General_Course_Info/wiki/Assignment%231#Select_an_Expression_Data_Set</a> 2. <a href="https://www.ncbi.nlm.nih.gov/geo/info/geo2r.html#how_to_use" class="uri">https://www.ncbi.nlm.nih.gov/geo/info/geo2r.html#how_to_use</a> 3. <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41816" class="uri">https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41816</a> 4. <a href="https://risserlin.github.io/BCB420-lectures-public/lecture4_data_exploration_and_normalization.html#1" class="uri">https://risserlin.github.io/BCB420-lectures-public/lecture4_data_exploration_and_normalization.html#1</a> 5. <a href="https://www.ncbi.nlm.nih.gov/pubmed/23966295" class="uri">https://www.ncbi.nlm.nih.gov/pubmed/23966295</a> 6. <a href="http://bioconductor.org/packages/release/data/annotation/html/hugene11sttranscriptcluster.db.html" class="uri">http://bioconductor.org/packages/release/data/annotation/html/hugene11sttranscriptcluster.db.html</a></p>
 </div>
 </div>
 <div id="code-output" class="section level2">
@@ -286,6 +290,7 @@ gse &lt;- getGEO('GSE41816', destdir = &quot;.&quot;,
                       fill = TRUE,
                       comment.char = &quot;!&quot;)
 exp0 &lt;- exp
+# save
 save(exp0, file = 'exp_GSE41816.Rdata')</code></pre>
 <pre class="r"><code>#GSE41816
 # load the data
@@ -351,6 +356,7 @@ exp1 &lt;- exp0
 save(exp1, file = 'exp_GSE41816_id_trans.Rdata')</code></pre>
 <pre class="r"><code># load data after mapping and clean
 load(&quot;exp_GSE41816_id_trans.Rdata&quot;)
+# load data as matrix
 load(&quot;GSE41816_matrix.Rdata&quot;)
 
 # Plots
