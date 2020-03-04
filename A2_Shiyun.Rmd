@@ -108,7 +108,7 @@ par(mar=c(2+round(max(nchar(sampleNames(gset)))/2),4,2,1))
 title <- paste ("GSE41816", '/', annotation(gset), "Original Selected Samples", sep ='')
 boxplot(exprs(gset), boxwex=0.7, notch=T, main=title, outline=FALSE, las=2)
 ```
-This is the Boxplot of the original data.
+  This is the Boxplot of the original data.
 
 ```{r plot3, echo=FALSE}
 #==============================================
@@ -121,7 +121,7 @@ boxplot(d2p, xlab = "Samples", tlab = "log2",
 abline(h = median(apply(d2p, 2, median)), 
        col = "green", lwd = 0.6, lty = "dashed")
 ```
-The boxplot shows the data after normalization, log2 ratio and cpm were used.
+  The boxplot shows the data after normalization, log2 ratio and cpm were used.
 
 ```{r plot4, echo=FALSE}
 #=============================================
@@ -143,7 +143,7 @@ boxplot(exp2, xlab = "Samples", tlab = "Values",
         cex.aixs = 0.5, main = "GSE41816 Selected Samples",
         col = c(rep("skyblue1", 3), rep("slateblue1", 3)))
 ```
-Boxplot from original data, blue color represents the CONTROL samples, and the purple color represents the CASE. 
+  Boxplot from original data, blue color represents the CONTROL samples, and the purple color represents the CASE. 
 
 ```{r plot5, echo=FALSE}
 #=========================================
@@ -152,14 +152,14 @@ library(preprocessCore)
 GSE41816 <- normalize.quantiles(exprs(gset))
 plot(density(GSE41816), col = "blue", main = "Quantile Normalization of GSE41816")
 ```
-Plot of GSE41816 database by using quantile normalization.
+  Plot of GSE41816 database by using quantile normalization.
 
 ```{r plot6, echo=FALSE}
 #=======================================
 GSE41816log <- log2(exprs(gset))
 plot(GSE41816log, main = "QQplot of GSE41816")
 ```
-QQ-Plot of GSE41816 database.
+  QQ-Plot of GSE41816 database.
 
 ```{r plot7, echo=FALSE}
 #=======================================
@@ -187,7 +187,7 @@ legend("topleft", colnames(exp2), col = cols,
        lty=ltys, cex = 0.40, border = "blue", 
        text.col="green4", merge = TRUE, bg = "gray90")
 ```
-This is the density plot by using log2 ratio for the original data.
+  This is the density plot by using log2 ratio for the original data.
 
 ```{r plot8, echo=FALSE}
 #=======================================
@@ -223,14 +223,14 @@ legend("topleft", colnames(exp2), col = cols,
        lty=ltys, cex = 0.40, border = "blue", 
        text.col="green4", merge = TRUE, bg = "gray90")
 ```
-This the density plot after using cpm function.
+  This the density plot after using cpm function.
 
 ```{r plot9, echo=FALSE}
 #===============================================
 # MDS plot
 plotMDS(d, labels = colnames(exp2), col = c(rep("green", 3), rep("blue", 3)))
 ```
-MDS plot shows the relation between CONTROL and CASE. The relation between CONTROL and CASE are pretty close. The most differences are between differet cell types.
+  MDS plot shows the relation between CONTROL and CASE. The relation between CONTROL and CASE are pretty close. The most differences are between differet cell types.
 
 ```{r group_data, echo=FALSE}
 #get rid of low counts
@@ -287,7 +287,7 @@ length(which(qlf_output$table$PValue < 0.05
 length(which(qlf_output$table$PValue < 0.05
              & qlf_output$table$logFC < 0))
 ```
-The glmQLFTest from edgeR package is based on the cell line MDA231. There are 947 genes pass the threshold p-value which less than 0.05. There are 292 genes pass correction, 613 genes are up regulated and 334 genes are down regulated.
+  The glmQLFTest from edgeR package is based on the cell line MDA231. There are 947 genes pass the threshold p-value which less than 0.05. There are 292 genes pass correction, 613 genes are up regulated and 334 genes are down regulated.
 
 
 
@@ -296,7 +296,7 @@ head(qlf_output$table)
 top <- rownames(head(qlf_output$table))
 filter_data_matrix[top, ]
 ```
-This is part of the table contents after quasi linear fit and calculating the p-values. These two tables return the top hits which ranked by p-values and the corresponding original data.
+  This is part of the table contents after quasi linear fit and calculating the p-values. These two tables return the top hits which ranked by p-values and the corresponding original data.
 
 
 ```{r plot10, echo=FALSE}
@@ -311,7 +311,7 @@ abline(h = c(-1, 1), col = "green")
 plotMD(qlf.con_vs_case, status = dt, values = c(1, -1), 
        col = c("red", "blue"), main = "1.Up-regulated vs. -1.Down-regulated")
 ```
-Extract differential expressed genes, there is a part of genes names showing above. These two plots are used to visualize the amount of differentially expressed genes.
+  Extract differential expressed genes, there is a part of genes names showing above. These two plots are used to visualize the amount of differentially expressed genes.
 
 ```{r plot11, echo=FALSE}
 library(pheatmap)
@@ -325,7 +325,7 @@ pheatmap::pheatmap(choose_matrix,
                    show_rownames = FALSE,
                    drop_levels = TRUE)
 ```
-The heatmap contains the top hits which p-value less than 0.05 differential expression genes that calculated by quasi-likelihood.
+  The heatmap contains the top hits which p-value less than 0.05 differential expression genes that calculated by quasi-likelihood.
 
 ```{r lmFite, echo=FALSE}
 fit_lm <- lmFit(filter_data_matrix, model_pat)
@@ -343,7 +343,7 @@ length(which(output_hits_pat$P.Value < 0.05))
 # how many genes pass correction
 length(which(output_hits_pat$adj.P.Val < 0.05))
 ```
-The table is the sample output for lmFit linear regression. There are 2670 genes pass the threshold which less than 0.05. 480 genes pass the correction.
+  The table is the sample output for lmFit linear regression. There are 2670 genes pass the threshold which less than 0.05. 480 genes pass the correction.
 
 ```{r heatmap_lm, echo=FALSE}
 library(pheatmap)
@@ -356,7 +356,7 @@ pheatmap::pheatmap(lmch_matrix,
                    show_rownames = FALSE,
                    drop_levels = TRUE)
 ```
-The heatmap contains the top hits which p-value less than 0.05 differential expression genes that calculated by lmFit.
+  The heatmap contains the top hits which p-value less than 0.05 differential expression genes that calculated by lmFit.
 
 ```{r limma_quasi, echo=FALSE}
 qlf_pval <- data.frame(
@@ -384,7 +384,7 @@ plot(two_model_pval$qlf_pvalue,
      ylab = "Limma model p-values",
      main = "QLF vs Limma")
 ```
-This plot is used to compare Quasi-likelihood model and limma model.
+  This plot is used to compare Quasi-likelihood model and limma model.
 
 
 ![Fig. 1. Balko, J. M., Schwarz, L. J., Bhola, N. E., Kurupi, R., Owens, P., Miller, T. W., . Arteaga, C. L. (2013, October 15). Retrieved from Activation of MAPK pathways due to DUSP4 loss promotes cancer stem cell-like phenotypes in basal-like breast cancer.](pic/F1.jpg)
