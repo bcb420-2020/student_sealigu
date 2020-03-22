@@ -444,6 +444,13 @@ write.table(x = data.frame(genename = qlf_hits$x,
             col.names = FALSE,
             quote = FALSE)
 
+write.table(x = data.frame(genename = qlf_hits$x),
+            file = file.path("data", "GSE41816_RANKS.txt"),
+            sep = "\t",
+            row.names = FALSE,
+            col.names = FALSE,
+            quote = FALSE)
+
 ```
 
 ## Thresholded Analysis
